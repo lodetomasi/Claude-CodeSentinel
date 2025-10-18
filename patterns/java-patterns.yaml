@@ -1,0 +1,112 @@
+language: java
+version: 1.0
+
+security:
+  sql_injection:
+    - pattern: 'query.*\+'
+    - pattern: 'Statement.*executeQuery.*\+'
+    - pattern: '"SELECT.*".*\+'
+    - pattern: '"INSERT.*".*\+'
+    - pattern: '@Query.*\+'
+
+  hardcoded_secrets:
+    - pattern: 'password.*=.*".*"'
+    - pattern: 'secret.*=.*".*"'
+    - pattern: 'apiKey.*=.*".*"'
+    - pattern: 'private.*key.*=.*".*"'
+
+  auth_missing:
+    - pattern: '@RequestMapping|@GetMapping|@PostMapping|@PutMapping|@DeleteMapping'
+      exclude: '@Secured|@PreAuthorize|@RolesAllowed'
+
+  weak_crypto:
+    - pattern: 'MD5|SHA1'
+    - pattern: 'Cipher\.getInstance\("DES|Cipher\.getInstance\("3DES'
+
+  xss_risk:
+    - pattern: 'response\.getWriter\(\)\.write.*\+'
+
+performance:
+  n_plus_one:
+    - pattern: '\.findAll\(\)|\.getAll\(\)'
+      check_next_lines: 10
+      look_for_relationship_access: true
+
+  no_batch:
+    - pattern: 'for.*\{.*repository\.save\('
+    - pattern: 'for.*\{.*\.save\('
+
+  nested_loops:
+    - pattern: 'for.*for.*for'
+
+  missing_pagination:
+    - pattern: '\.findAll\(\)'
+      exclude: 'Pageable|PageRequest'
+
+  missing_cache:
+    - pattern: 'findAll\(\)|findBy'
+      check_for: '@Cacheable'
+
+concurrency:
+  race_condition:
+    - pattern: 'private.*='
+      exclude: 'final|static final'
+      check_class_annotation: '@Service|@Component'
+
+  thread_creation:
+    - pattern: 'new Thread'
+    - pattern: 'Executors\.newCachedThreadPool'
+
+  resource_leak:
+    - pattern: 'new.*InputStream|new.*OutputStream|Connection.*='
+      check_try_with_resources: true
+
+resilience:
+  missing_timeout:
+    - pattern: 'new RestTemplate\(\)|RestTemplate restTemplate = new'
+      check_for: 'setTimeout|timeout'
+
+  no_circuit_breaker:
+    - pattern: 'restTemplate\.|feignClient\.|httpClient\.'
+      check_for: '@CircuitBreaker|@HystrixCommand'
+
+data_integrity:
+  missing_transaction:
+    - pattern: 'repository\.save.*repository\.save'
+      check_for: '@Transactional'
+
+  no_version:
+    - pattern: '@Entity'
+      check_for: '@Version'
+
+observability:
+  poor_logging:
+    - pattern: 'System\.out\.println|System\.err\.println'
+
+  silent_failure:
+    - pattern: 'catch.*\{'
+      check_next_line_for: 'log\.|throw'
+
+  no_metrics:
+    - pattern: '@RestController|@Service'
+      check_for: 'Counter|Timer|@Timed'
+
+api_design:
+  missing_validation:
+    - pattern: '@PostMapping|@PutMapping|@PatchMapping'
+      check_parameter_for: '@Valid|@Validated'
+
+  wrong_status:
+    - pattern: 'return.*ok\(null\)'
+
+  missing_pagination:
+    - pattern: '@GetMapping.*public List<'
+      check_for: 'Pageable|Page<'
+
+code_quality:
+  god_class:
+    - check: lines > 500
+
+  magic_numbers:
+    - pattern: '\d{2,}'
+      exclude: '0|1|-1|100|1000'

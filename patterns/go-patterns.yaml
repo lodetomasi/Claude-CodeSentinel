@@ -1,0 +1,35 @@
+language: go
+version: 1.0
+
+security:
+  sql_injection:
+    - pattern: 'fmt\.Sprintf.*SELECT|fmt\.Sprintf.*INSERT'
+    - pattern: 'db\.Query.*\+'
+
+  command_injection:
+    - pattern: 'exec\.Command.*\+'
+
+performance:
+  n_plus_one:
+    - pattern: 'Find\(|FindAll\('
+      check_for: 'Preload|Joins'
+
+concurrency:
+  missing_sync:
+    - pattern: 'go func'
+      check_for: 'sync\.|channel'
+
+  race_condition:
+    - pattern: 'var.*=.*'
+      scope: global
+      check_goroutines: true
+
+resilience:
+  missing_timeout:
+    - pattern: 'http\.Get\(|http\.Post\('
+      check_for: 'context\.WithTimeout'
+
+observability:
+  no_error_check:
+    - pattern: 'if err != nil'
+      ensure_present: true

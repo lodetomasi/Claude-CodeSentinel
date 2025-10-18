@@ -1,0 +1,65 @@
+language: python
+version: 1.0
+
+security:
+  sql_injection:
+    - pattern: 'cursor\.execute.*%'
+    - pattern: 'cursor\.execute.*\.format\('
+    - pattern: 'f"SELECT|f"INSERT|f"UPDATE|f"DELETE'
+    - pattern: '\.raw\(.*%'
+
+  hardcoded_secrets:
+    - pattern: "password\\s*=\\s*[\"'].*[\"']"
+    - pattern: "SECRET_KEY\\s*=\\s*[\"'].*[\"']"
+    - pattern: "API_KEY\\s*=\\s*[\"'].*[\"']"
+
+  command_injection:
+    - pattern: 'os\.system.*\+'
+    - pattern: 'subprocess.*shell=True'
+
+  auth_missing:
+    - pattern: 'def.*\(request'
+      exclude: '@login_required|@permission_required'
+
+performance:
+  n_plus_one:
+    - pattern: '\.all\(\)|\.filter\(\)'
+      check_next_lines: 10
+      check_for: 'select_related|prefetch_related'
+
+  no_batch:
+    - pattern: 'for.*in.*:\s+\.save\('
+
+  nested_loops:
+    - pattern: 'for.*:\s+for.*:\s+for'
+
+concurrency:
+  shared_mutable_state:
+    - pattern: '^[A-Z_]+\s*=.*'
+      check_if_modified: true
+
+  no_thread_safety:
+    - pattern: 'threading\.|Thread\('
+      check_for: 'Lock|RLock'
+
+resilience:
+  missing_timeout:
+    - pattern: 'requests\.get\(|requests\.post\('
+      check_for: 'timeout='
+
+  no_retry:
+    - pattern: 'requests\.'
+      check_for: '@retry|tenacity'
+
+observability:
+  poor_logging:
+    - pattern: 'print\('
+
+  no_structured_logging:
+    - pattern: 'logging\.'
+      check_for: 'extra='
+
+data_integrity:
+  missing_transaction:
+    - pattern: '\.save\(.*\.save\('
+      check_for: '@transaction\.atomic|with transaction'

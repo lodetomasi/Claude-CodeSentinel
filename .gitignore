@@ -1,0 +1,7 @@
+# Claude Code reports
+reports/*.md
+reports/*.json
+
+# Keep directory structure
+!reports/.gitkeep
+!.claude/.gitkeep

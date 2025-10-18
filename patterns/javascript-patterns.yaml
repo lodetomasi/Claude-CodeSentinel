@@ -1,0 +1,48 @@
+language: javascript
+version: 1.0
+
+security:
+  sql_injection:
+    - pattern: 'query.*\+'
+    - pattern: '`SELECT.*\$\{|`INSERT.*\$\{'
+
+  xss:
+    - pattern: 'innerHTML\s*='
+    - pattern: 'dangerouslySetInnerHTML'
+
+  hardcoded_secrets:
+    - pattern: "password\\s*:\\s*[\"'].*[\"']"
+    - pattern: "apiKey\\s*:\\s*[\"'].*[\"']"
+
+performance:
+  n_plus_one:
+    - pattern: '\.findAll\(\)|\.find\(\)'
+      exclude: 'include:|populate:'
+
+  no_pagination:
+    - pattern: '\.find\(\)|\.findAll\(\)'
+      exclude: 'limit|skip'
+
+  blocking_operations:
+    - pattern: 'fs\.readFileSync|fs\.writeFileSync'
+
+concurrency:
+  callback_hell:
+    - pattern: '\}\)\s*;.*\}\)\s*;.*\}\)\s*;'
+
+  unhandled_promise:
+    - pattern: '\.then\('
+      exclude: '\.catch\('
+
+resilience:
+  missing_timeout:
+    - pattern: 'fetch\(|axios\.'
+      check_for: 'timeout|signal'
+
+observability:
+  poor_logging:
+    - pattern: 'console\.log'
+
+  silent_failure:
+    - pattern: 'catch.*\{'
+      check_next_line: 'console\.|log\.'
