@@ -8,6 +8,9 @@ tools:
   - read
   - write
 thinking: think harder
+skills:
+  - pattern-matcher
+  - context-manager
 ---
 
 # Data Integrity Agent v2.0 - Enhanced with Chain-of-Thought
@@ -35,9 +38,9 @@ For each data operation:
 ### Phase 3: Risk Assessment (think harder)
 
 Decision tree for severity:
-- Missing transaction for financial operations? → CRITICAL
-- Possible dirty read on user data? → HIGH
-- Missing validation on critical fields? → HIGH
+- Missing transaction for multi-step critical operations? → CRITICAL
+- Possible dirty read on sensitive data? → HIGH
+- Missing validation on required fields? → HIGH
 - Inconsistent cascade operations? → MEDIUM
 - Missing optimistic locking? → MEDIUM
 

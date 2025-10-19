@@ -1,19 +1,28 @@
-# Claude-CodeSentinel 🛡️
+# Claude-CodeSentinel v2.0 🛡️
 
 [![GitHub stars](https://img.shields.io/github/stars/lodetomasi/Claude-CodeSentinel?style=social)](https://github.com/lodetomasi/Claude-CodeSentinel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Claude Code Compatible](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://claude.ai)
+[![Claude Code Compatible](https://img.shields.io/badge/Claude%20Code-v2.0-blue)](https://claude.ai)
 [![Code Review](https://img.shields.io/badge/Code%20Review-AI%20Powered-green)](https://github.com/lodetomasi/Claude-CodeSentinel)
 [![Issues Detected](https://img.shields.io/badge/Issues%20Detected-65%2B-red)](https://github.com/lodetomasi/Claude-CodeSentinel)
 
-**AI-powered code review framework** for Claude Code that detects **65+ issue types** across security, performance, architecture, and more. Built with **multi-agent architecture** for comprehensive code analysis.
+**Next-gen AI code review framework** with **Chain-of-Thought reasoning** and **intelligent agent coordination**. Detects **65+ issue types** using **10 specialized agents** with advanced tools and skills.
+
+## 🆕 What's New in v2.0
+
+- 🧠 **Chain-of-Thought Reasoning** - 4-phase analysis process for each agent
+- 🔧 **Advanced Tools** - Each agent equipped with bash, grep, read, write capabilities
+- 🎯 **Intelligent Agent Chaining** - Tier-based execution with context passing
+- 📦 **Modular Skills System** - Reusable capabilities like pattern-matcher and context-manager
+- 💡 **Smart Token Management** - Optimized thinking levels (think → ultrathink)
+- 🚀 **Parallel Execution** - Agents run concurrently for faster analysis
 
 ## ⭐ Why Claude-CodeSentinel?
 
 - 🚀 **10x Faster Code Reviews** - Automated detection in minutes, not hours
 - 🎯 **95% Accuracy** on critical security vulnerabilities
 - 🔍 **65+ Issue Types** detected across 10 categories
-- 🤖 **Multi-Agent Intelligence** - 10 specialized AI agents working in parallel
+- 🤖 **Multi-Agent Intelligence** - 10 specialized AI agents with CoT reasoning
 - 📊 **4 Languages Supported** - Java, Python, JavaScript, Go
 - 🛠️ **Zero Config** - Works out of the box with Claude Code
 - 📈 **Enterprise Ready** - Production-tested patterns and detection rules
@@ -21,17 +30,15 @@
 ## 🚀 Quick Start
 
 ```bash
-# 1. Clone into your project
-git clone https://github.com/lodetomasi/Claude-CodeSentinel.git .claude-sentinel
+# 1. Clone the framework
+git clone https://github.com/lodetomasi/Claude-CodeSentinel.git
 
-# 2. Copy framework files
-cp -r .claude-sentinel/.claude .
-cp -r .claude-sentinel/patterns .
-cp .claude-sentinel/CLAUDE.md .
+# 2. Copy to your project
+cp -r Claude-CodeSentinel/.claude your-project/
+cp Claude-CodeSentinel/CLAUDE.md your-project/
 
-# 3. Open in Claude Code and run
-/quick-scan     # 5-min fast scan
-/full-review    # 60-min deep analysis
+# 3. Open your project in Claude Code and run
+/project:full-review    # Complete 45-60 min analysis with all agents
 ```
 
 ## 🎯 What It Detects
@@ -54,15 +61,17 @@ cp .claude-sentinel/CLAUDE.md .
 ### 💾 Data Integrity (7 types)
 `Missing Transactions` • `No Optimistic Locking` • `Dirty Reads` • `Missing Cascade` • `No Validation` • `Inconsistent State` • `Lost Updates`
 
-## 📋 Available Commands
+## 📋 Available Command
 
 | Command | Time | Description |
 |---------|------|-------------|
-| `/quick-scan` | 5 min | Fast pattern-based hotspot detection |
-| `/full-review` | 45-60 min | Complete multi-agent analysis |
-| `/security-only` | 15 min | Security vulnerability deep dive |
-| `/performance-only` | 15 min | Performance bottleneck analysis |
-| `/resilience-only` | 15 min | Fault tolerance assessment |
+| `/project:full-review` | 45-60 min | Complete multi-agent analysis with all 10 agents |
+
+The framework automatically:
+- Detects your project languages and frameworks
+- Runs pattern scanning to identify hotspots
+- Coordinates all 10 agents with intelligent chaining
+- Generates comprehensive markdown report
 
 ## 📊 Supported Languages & Frameworks
 
@@ -88,16 +97,18 @@ Performance Improvements: 30% average
 False Positive Rate: <5% for critical issues
 ```
 
-## 📁 How It Works
+## 📁 Framework Structure
 
 ```
 your-project/
 ├── .claude/
-│   ├── agents/      # 10 specialized AI agents
-│   ├── commands/    # 5 workflow commands
-│   └── skills/      # 20+ detection capabilities
-├── patterns/        # Language-specific patterns
-├── CLAUDE.md        # Context for Claude Code
+│   ├── agents/      # 10 specialized AI agents with CoT
+│   ├── commands/    # Main analysis command
+│   ├── patterns/    # Language-specific detection patterns
+│   └── skills/      # Modular capabilities
+│       ├── pattern-matcher.md
+│       └── context-manager.md
+├── CLAUDE.md        # Framework instructions
 └── reports/         # Generated analysis reports
 ```
 

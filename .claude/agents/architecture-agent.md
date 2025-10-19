@@ -8,6 +8,9 @@ tools:
   - read
   - write
 thinking: think hard
+skills:
+  - pattern-matcher
+  - context-manager
 ---
 
 # Architecture Agent v2.0 - Enhanced with Chain-of-Thought

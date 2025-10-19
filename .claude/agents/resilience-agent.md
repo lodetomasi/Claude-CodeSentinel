@@ -38,10 +38,10 @@ For each external dependency:
 ### Phase 3: Impact Assessment (think harder)
 
 Decision tree for severity:
-- No timeout on payment service? → CRITICAL
+- No timeout on critical external service? → CRITICAL
 - Missing circuit breaker for critical path? → HIGH
 - No retry for transient failures? → HIGH
-- Missing fallback for optional features? → MEDIUM
+- Missing fallback for degradable features? → MEDIUM
 - No bulkhead isolation? → MEDIUM
 
 ### Phase 4: Resilience Pattern Design (think hard)

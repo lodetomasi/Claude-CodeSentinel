@@ -1,0 +1,185 @@
+# Claude-CodeSentinel Configuration v2.0
+# Central configuration for the AI code review framework
+
+framework:
+  name: Claude-CodeSentinel
+  version: 2.0
+  author: lodetomasi
+  license: MIT
+
+# Directory structure
+paths:
+  base: .claude
+  agents: .claude/agents
+  commands: .claude/commands
+  patterns: .claude/patterns
+  skills: .claude/skills
+  reports: reports
+
+# Agent configuration
+agents:
+  orchestrator:
+    model: claude-sonnet-4-5-20250929
+    thinking: ultrathink
+    role: coordinator
+
+  specialists:
+    - security-agent
+    - performance-agent
+    - concurrency-agent
+    - architecture-agent
+    - resilience-agent
+    - data-integrity-agent
+    - observability-agent
+    - api-design-agent
+    - code-quality-agent
+
+# Agent execution tiers (for intelligent chaining)
+execution_tiers:
+  tier_1:  # Critical - Run first
+    - security-agent
+    - performance-agent
+
+  tier_2:  # Depend on tier 1
+    - concurrency-agent
+    - data-integrity-agent
+
+  tier_3:  # Need context from tier 1+2
+    - architecture-agent
+    - resilience-agent
+
+  tier_4:  # Final analysis
+    - observability-agent
+    - api-design-agent
+    - code-quality-agent
+
+# Token budget management
+token_budgets:
+  think: 4000          # Simple pattern detection
+  think_hard: 8000     # Single file analysis
+  think_harder: 16000  # Multi-file analysis
+  ultrathink: 32000    # Full system coordination
+
+# Severity definitions
+severity_levels:
+  CRITICAL:
+    weight: 4
+    color: red
+    action: immediate
+
+  HIGH:
+    weight: 3
+    color: orange
+    action: before_release
+
+  MEDIUM:
+    weight: 2
+    color: yellow
+    action: next_sprint
+
+  LOW:
+    weight: 1
+    color: blue
+    action: when_convenient
+
+# Language support
+supported_languages:
+  java:
+    extensions: [.java]
+    frameworks: [spring, springboot, hibernate, jpa]
+    patterns: java-patterns.yaml
+
+  python:
+    extensions: [.py]
+    frameworks: [django, flask, fastapi, sqlalchemy]
+    patterns: python-patterns.yaml
+
+  javascript:
+    extensions: [.js, .jsx, .ts, .tsx]
+    frameworks: [express, react, angular, vue, nodejs]
+    patterns: javascript-patterns.yaml
+
+  go:
+    extensions: [.go]
+    frameworks: [gin, echo, fiber, gorm]
+    patterns: go-patterns.yaml
+
+# Analysis parameters
+analysis:
+  max_file_size: 50000  # Lines
+  context_window: 200   # Lines around findings
+  parallel_agents: 5    # Max concurrent agents
+  cache_ttl: 3600      # Seconds
+
+  # File filtering
+  exclude_patterns:
+    - "*.min.js"
+    - "*.min.css"
+    - "node_modules/*"
+    - "vendor/*"
+    - ".git/*"
+    - "*.lock"
+    - "*.sum"
+
+# Reporting configuration
+reporting:
+  format: markdown
+  include_code_snippets: true
+  max_snippet_lines: 20
+  include_statistics: true
+  include_recommendations: true
+
+  sections:
+    - executive_summary
+    - critical_findings
+    - high_priority
+    - medium_priority
+    - low_priority
+    - statistics
+    - recommendations
+
+# Performance optimizations
+optimizations:
+  pattern_caching: true
+  incremental_analysis: true
+  parallel_execution: true
+  semantic_segmentation: true
+  progressive_loading: true
+
+# Default thresholds
+thresholds:
+  god_class_lines: 500
+  complex_method_lines: 50
+  deep_nesting_levels: 4
+  cyclomatic_complexity: 10
+  duplication_lines: 30
+
+# Skills configuration
+skills:
+  pattern-matcher:
+    enabled: true
+    cache_results: true
+
+  context-manager:
+    enabled: true
+    compression_ratio: 0.6
+
+# Feature flags
+features:
+  chain_of_thought: true
+  agent_chaining: true
+  parallel_analysis: true
+  smart_context: true
+  pattern_caching: true
+
+# Logging
+logging:
+  level: INFO
+  file: .claude/analysis.log
+  max_size: 10MB
+
+# Version info
+meta:
+  created: 2024-10-19
+  updated: 2024-10-19
+  compatibility: "Claude Code v2.0+"

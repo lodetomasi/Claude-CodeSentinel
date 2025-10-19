@@ -1,25 +1,23 @@
-# Code Review Framework for Claude Code
+# Claude-CodeSentinel v2.0 - AI Code Review Framework
 
 ## Repository Purpose
-AI-powered code review framework detecting 40+ issue types across 10 categories.
-Analyzes: security, performance, concurrency, architecture, resilience, data integrity, observability, API design, testing gaps, and code quality.
+Next-generation AI-powered code review framework with Chain-of-Thought reasoning detecting 65+ issue types across 10 categories.
+Features: intelligent agent coordination, modular skills, advanced tools, and optimized token management.
 
 ## Project Structure
 ```
 .claude/
-├── agents/          # 9 specialized AI agents
-├── commands/        # 5 workflow commands
-└── skills/          # 20+ modular detection capabilities
-patterns/            # Language-specific grep patterns
-reports/             # Generated analysis reports (git ignored)
+├── agents/          # 10 specialized AI agents with CoT
+├── commands/        # Main analysis command
+├── patterns/        # Language-specific detection patterns
+└── skills/          # Modular capabilities (pattern-matcher, context-manager)
+reports/             # Generated analysis reports
 ```
 
-## Quick Start Commands
-- `/project:quick-scan` - Fast pattern scan (5 min) - identifies hotspots
-- `/project:full-review` - Complete analysis (45-60 min) - all categories
-- `/project:security-only` - Security deep dive (15 min)
-- `/project:performance-only` - Performance deep dive (15 min)
-- `/project:resilience-only` - Resilience analysis (15 min)
+## Quick Start Command
+- `/project:full-review` - Complete analysis (45-60 min) with all 10 agents
+
+The framework automatically detects languages, runs pattern scanning, coordinates agents, and generates reports.
 
 ## Standard Workflow
 1. **Discovery** (3 min): Detect languages, frameworks, LOC count
