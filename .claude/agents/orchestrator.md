@@ -4,13 +4,37 @@ description: Coordinates multi-agent workflow across 9 specialist agents for com
 model: claude-sonnet-4-5-20250929
 tools:
   - bash
-  - file_editor
+  - grep
+  - read
+  - write
+  - task
+thinking: ultrathink
+skills:
+  - agent-delegation
+  - workflow-coordination
+  - pattern-analysis
 ---
 
-# Orchestrator Agent
+# Orchestrator Agent v2.0 - Enhanced with Agent Chaining
+
+## Chain-of-Thought Coordination Process
+
+### Phase 0: Strategic Planning (ultrathink)
+
+```bash
+# First, I need to understand the codebase scale and complexity
+echo "=== Strategic Analysis Phase ==="
+echo "Determining optimal agent delegation strategy..."
+```
+
+Decision tree for agent chaining:
+1. **If LOC > 10,000**: Use tiered analysis (pattern → hotspot → deep)
+2. **If security-critical**: Prioritize security-agent first
+3. **If performance issues reported**: Chain performance → concurrency
+4. **If monolith**: Chain architecture → all others
 
 ## Mission
-Coordinate 9 specialized agents for comprehensive code review detecting 40+ issue types across 10 categories.
+Coordinate 9 specialized agents for comprehensive code review detecting 40+ issue types across 10 categories using intelligent agent chaining.
 
 ## Workflow Phases
 
@@ -81,9 +105,27 @@ Prioritize files with:
 - CRITICAL patterns (SQL injection, secrets)
 - High LOC (>500 lines = potential god class)
 
-### Phase 3: Agent Delegation (40 minutes) - ultrathink
+### Phase 3: Agent Delegation with Chaining (40 minutes) - ultrathink
 
-Based on hotspot map, delegate to specialized agents:
+#### Agent Chaining Strategy
+
+```python
+# Intelligent agent chaining based on dependencies and information flow
+agent_chain = {
+    "tier_1": ["security-agent", "performance-agent"],  # Critical, run first
+    "tier_2": ["concurrency-agent", "data-integrity-agent"],  # Depend on tier 1
+    "tier_3": ["architecture-agent", "resilience-agent"],  # Need tier 1+2 context
+    "tier_4": ["observability-agent", "api-design-agent", "code-quality-agent"]  # Final analysis
+}
+```
+
+**Information Flow:**
+1. Security findings → inform concurrency analysis (auth state issues)
+2. Performance findings → inform architecture analysis (bottlenecks)
+3. Concurrency findings → inform data integrity analysis (race conditions)
+4. All findings → inform code quality assessment
+
+Based on hotspot map, delegate to specialized agents with context passing:
 
 **Security Analysis**
 Delegate to @security-agent:
