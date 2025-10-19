@@ -23,9 +23,36 @@ Execute discovery phase:
 
 ### Phase 2: Pattern Scan (5 min) - think hard
 
-Execute `/project:quick-scan` command.
+Execute integrated pattern scanning:
 
-Save results to `reports/hotspots-[timestamp].txt` for reference.
+```bash
+echo "=== Pattern Scanning Phase ==="
+echo ""
+echo "Detecting languages and frameworks..."
+echo "TypeScript files: $(find . -name "*.ts" -not -path "*/node_modules/*" 2>/dev/null | wc -l)"
+echo "JavaScript files: $(find . -name "*.js" -not -path "*/node_modules/*" 2>/dev/null | wc -l)"
+echo "Java files: $(find . -name "*.java" 2>/dev/null | wc -l)"
+echo "Python files: $(find . -name "*.py" 2>/dev/null | wc -l)"
+echo ""
+
+echo "Scanning for security patterns..."
+grep -r "password\|secret\|token\|api[_-]key" --include="*.ts" --include="*.js" --include="*.java" --include="*.py" -n 2>/dev/null | head -10
+
+echo ""
+echo "Scanning for SQL injection patterns..."
+grep -r "SELECT.*WHERE.*[\+\$]" --include="*.ts" --include="*.js" --include="*.java" --include="*.py" -n 2>/dev/null | head -10
+
+echo ""
+echo "Scanning for N+1 query patterns..."
+grep -r "for.*await\|forEach.*query\|map.*fetch" --include="*.ts" --include="*.js" -n 2>/dev/null | head -10
+
+echo ""
+echo "Scanning for performance issues..."
+grep -r "for.*for.*for\|while.*while" --include="*.ts" --include="*.js" --include="*.java" --include="*.py" -n 2>/dev/null | head -5
+```
+
+Identify and prioritize hotspot files based on pattern matches.
+Save results internally for agent delegation.
 
 ### Phase 3: Multi-Agent Analysis (40 min) - ultrathink
 
