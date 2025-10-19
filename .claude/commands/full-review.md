@@ -17,23 +17,53 @@ TOTAL_AGENTS=10
 COMPLETED_AGENTS=0
 TOTAL_FINDINGS=0
 
+# Define colors for phases and agents
+declare -A PHASE_COLORS=(
+    ["Discovery"]="\033[1;94m"        # Bright Blue
+    ["Pattern Scan"]="\033[1;93m"     # Bright Yellow
+    ["Agent Analysis"]="\033[1;95m"   # Bright Magenta
+    ["Assembly"]="\033[1;92m"         # Bright Green
+    ["Report"]="\033[1;96m"           # Bright Cyan
+)
+
+declare -A AGENT_COLORS=(
+    ["security-agent"]="\033[1;31m"        # Bold Red
+    ["performance-agent"]="\033[1;33m"     # Bold Yellow
+    ["concurrency-agent"]="\033[1;35m"     # Bold Magenta
+    ["data-integrity-agent"]="\033[1;36m"  # Bold Cyan
+    ["architecture-agent"]="\033[1;34m"    # Bold Blue
+    ["resilience-agent"]="\033[1;32m"      # Bold Green
+    ["observability-agent"]="\033[1;37m"   # Bold White
+    ["api-design-agent"]="\033[1;95m"      # Light Magenta
+    ["code-quality-agent"]="\033[1;93m"    # Light Yellow
+)
+
+RESET="\033[0m"
+
 report_progress() {
     local phase=$1
     local details=$2
+    local agent=${3:-}  # Optional agent parameter
     local current_time=$(date +%s)
     local elapsed=$((current_time - START_TIME))
     local eta=$(estimate_remaining_time $COMPLETED_AGENTS $TOTAL_AGENTS $elapsed)
 
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "⚡ PROGRESS UPDATE [$(date +%H:%M:%S)]"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "📍 Phase: $phase"
-    echo "📝 Status: $details"
-    echo "⏱️ Elapsed: $(format_time $elapsed)"
-    echo "🎯 Agents: $COMPLETED_AGENTS/$TOTAL_AGENTS complete"
-    echo "📊 Findings so far: $TOTAL_FINDINGS"
-    echo "⏳ ETA: $(format_time $eta)"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    # Get color for phase or agent
+    local color="${PHASE_COLORS[$phase]}"
+    [ -n "$agent" ] && color="${AGENT_COLORS[$agent]}"
+    [ -z "$color" ] && color="\033[1;37m"  # Default to white
+
+    echo -e "${color}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+    echo -e "${color}⚡ PROGRESS UPDATE [$(date +%H:%M:%S)]${RESET}"
+    echo -e "${color}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+    echo -e "📍 Phase: ${color}$phase${RESET}"
+    [ -n "$agent" ] && echo -e "🤖 Agent: ${color}$agent${RESET}"
+    echo -e "📝 Status: $details"
+    echo -e "⏱️ Elapsed: $(format_time $elapsed)"
+    echo -e "🎯 Agents: $COMPLETED_AGENTS/$TOTAL_AGENTS complete"
+    echo -e "📊 Findings so far: $TOTAL_FINDINGS"
+    echo -e "⏳ ETA: $(format_time $eta)"
+    echo -e "${color}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
     echo ""
 }
 
@@ -53,11 +83,40 @@ format_time() {
 }
 
 # Initialize v3.0 features
-echo "🚀 Initializing Claude-CodeSentinel v3.0 features..."
+echo -e "\033[1;96m🚀 Initializing Claude-CodeSentinel v3.0 features...\033[0m"
+
+# Function to launch agent with color
+launch_agent() {
+    local agent_name=$1
+    local task=$2
+    local color="${AGENT_COLORS[$agent_name]}"
+    [ -z "$color" ] && color="\033[1;37m"  # Default to white
+
+    echo -e "${color}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+    echo -e "${color}🚀 LAUNCHING AGENT: $agent_name${RESET}"
+    echo -e "${color}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+    echo -e "📋 Task: $task"
+    echo -e "${color}▶ Starting analysis...${RESET}"
+    echo ""
+}
+
+# Function to show agent completion
+complete_agent() {
+    local agent_name=$1
+    local findings=$2
+    local color="${AGENT_COLORS[$agent_name]}"
+    [ -z "$color" ] && color="\033[1;37m"
+
+    COMPLETED_AGENTS=$((COMPLETED_AGENTS + 1))
+    TOTAL_FINDINGS=$((TOTAL_FINDINGS + findings))
+
+    echo -e "${color}✅ $agent_name completed with $findings findings${RESET}"
+    echo ""
+}
 
 # Initialize findings cache
 init_findings_cache() {
-    echo "[CACHE] Initializing findings cache..."
+    echo -e "\033[1;92m[CACHE] Initializing findings cache...\033[0m"
     mkdir -p /tmp/codesentinel
     echo '{"findings": [], "stats": {}}' > /tmp/codesentinel/cache.json
 }
@@ -133,10 +192,19 @@ Save results internally for agent delegation.
 
 ### Phase 3: Multi-Agent Analysis (40 min) - ultrathink
 
+```bash
+report_progress "Agent Analysis" "Coordinating 9 specialized agents..."
+```
+
 **Coordinate 9 agents in parallel based on hotspots:**
 
 **Security Analysis** (Delegate to @security-agent)
-````
+
+```bash
+launch_agent "security-agent" "Analyzing security vulnerabilities"
+```
+
+````text
 Analyze files with security patterns:
 - SQL injection candidates
 - Hardcoded secrets
@@ -145,8 +213,17 @@ Analyze files with security patterns:
 Target: 5-20 findings
 ````
 
+```bash
+complete_agent "security-agent" 15  # Example: 15 findings
+```
+
 **Performance Analysis** (Delegate to @performance-agent)
-````
+
+```bash
+launch_agent "performance-agent" "Analyzing performance bottlenecks"
+```
+
+````text
 Analyze files with performance patterns:
 - N+1 query hotspots
 - Missing batch operations
@@ -154,6 +231,10 @@ Analyze files with performance patterns:
 - Missing caching opportunities
 Target: 10-30 findings
 ````
+
+```bash
+complete_agent "performance-agent" 23  # Example: 23 findings
+```
 
 **Concurrency Analysis** (Delegate to @concurrency-agent)
 ````

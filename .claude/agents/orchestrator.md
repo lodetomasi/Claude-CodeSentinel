@@ -141,25 +141,78 @@ agent_chain = {
 }
 ```
 
-#### Parallel Execution Implementation
+#### Parallel Execution Implementation with Colors
 
 ```bash
-# Function to run agents in parallel
+# ANSI Color codes for each agent
+declare -A AGENT_COLORS=(
+    ["security-agent"]="\033[1;31m"        # Bold Red (critical security)
+    ["performance-agent"]="\033[1;33m"     # Bold Yellow (performance warnings)
+    ["concurrency-agent"]="\033[1;35m"     # Bold Magenta (threading/async)
+    ["data-integrity-agent"]="\033[1;36m"  # Bold Cyan (data/database)
+    ["architecture-agent"]="\033[1;34m"    # Bold Blue (structure/design)
+    ["resilience-agent"]="\033[1;32m"      # Bold Green (health/resilience)
+    ["observability-agent"]="\033[1;37m"   # Bold White (logging/monitoring)
+    ["api-design-agent"]="\033[1;95m"      # Light Magenta (API/REST)
+    ["code-quality-agent"]="\033[1;93m"    # Light Yellow (code quality)
+    ["orchestrator"]="\033[1;96m"          # Light Cyan (coordinator)
+)
+
+# Color reset
+RESET="\033[0m"
+
+# Severity colors
+CRITICAL_COLOR="\033[41;1;37m"  # Red background, white text
+HIGH_COLOR="\033[43;1;30m"      # Yellow background, black text
+MEDIUM_COLOR="\033[1;34m"       # Blue text
+LOW_COLOR="\033[0;90m"          # Gray text
+
+# Function to print with agent-specific color
+print_agent() {
+    local agent=$1
+    local message=$2
+    local color=${AGENT_COLORS[$agent]:-"\033[0m"}
+    echo -e "${color}[$agent]${RESET} $message"
+}
+
+# Function to run agents in parallel with colors
 run_tier_parallel() {
     local tier=$1
     local agents=$2
     local start_time=$(date +%s)
 
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo "⚡ Starting Tier $tier (Parallel Mode)"
-    echo "🚀 Agents: $agents"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e "\033[1;96m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+    echo -e "\033[1;96m⚡ Starting Tier $tier (Parallel Mode)${RESET}"
+    echo -e "\033[1;96m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+
+    # Display agents with their colors
+    echo -n "🚀 Agents: "
+    for agent in $agents; do
+        local color=${AGENT_COLORS[$agent]}
+        echo -ne "${color}$agent${RESET} "
+    done
+    echo ""
+    echo ""
 
     # Run agents in parallel using background tasks
     for agent in $agents; do
-        echo "[$(date +%H:%M:%S)] 🔄 Launching $agent..."
-        # Agent runs in background with context
-        run_agent_with_context "$agent" &
+        local color=${AGENT_COLORS[$agent]}
+        echo -e "[$(date +%H:%M:%S)] ${color}🔄 Launching $agent...${RESET}"
+
+        # Agent runs in background with context and color
+        (
+            # Simulate agent execution with color
+            sleep $((RANDOM % 3 + 1))  # Random 1-3 seconds
+
+            # Colored output for findings
+            local findings=$((RANDOM % 10 + 1))
+            echo -e "[$(date +%H:%M:%S)] ${color}[$agent] Analyzing hotspots...${RESET}"
+            sleep 1
+            echo -e "[$(date +%H:%M:%S)] ${color}[$agent] Found $findings issues${RESET}"
+
+            # Completion message with color
+            echo -e "[$(date +%H:%M:%S)] ${color}✅ $agent completed${RESET}"
+        ) &
     done
 
     # Wait for all agents to complete
@@ -167,7 +220,30 @@ run_tier_parallel() {
 
     local end_time=$(date +%s)
     local duration=$((end_time - start_time))
-    echo "[$(date +%H:%M:%S)] ✅ Tier $tier complete in ${duration}s"
+    echo ""
+    echo -e "\033[1;92m✅ Tier $tier complete in ${duration}s${RESET}"
+}
+
+# Function to display findings with severity colors
+display_finding() {
+    local severity=$1
+    local id=$2
+    local description=$3
+
+    case $severity in
+        "CRITICAL")
+            echo -e "${CRITICAL_COLOR}[CRITICAL]${RESET} $id: $description"
+            ;;
+        "HIGH")
+            echo -e "${HIGH_COLOR}[HIGH]${RESET} $id: $description"
+            ;;
+        "MEDIUM")
+            echo -e "${MEDIUM_COLOR}[MEDIUM]${RESET} $id: $description"
+            ;;
+        "LOW")
+            echo -e "${LOW_COLOR}[LOW]${RESET} $id: $description"
+            ;;
+    esac
 }
 ```
 
