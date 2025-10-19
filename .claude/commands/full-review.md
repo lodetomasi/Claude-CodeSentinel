@@ -8,9 +8,86 @@ model: claude-sonnet-4-5-20250929
 
 Execute comprehensive analysis with all 9 specialized agents across 10 categories.
 
-## Workflow Phases
+## Enhanced Workflow with Progress Tracking
+
+```bash
+# Initialize progress tracking
+START_TIME=$(date +%s)
+TOTAL_AGENTS=10
+COMPLETED_AGENTS=0
+TOTAL_FINDINGS=0
+
+report_progress() {
+    local phase=$1
+    local details=$2
+    local current_time=$(date +%s)
+    local elapsed=$((current_time - START_TIME))
+    local eta=$(estimate_remaining_time $COMPLETED_AGENTS $TOTAL_AGENTS $elapsed)
+
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "⚡ PROGRESS UPDATE [$(date +%H:%M:%S)]"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "📍 Phase: $phase"
+    echo "📝 Status: $details"
+    echo "⏱️ Elapsed: $(format_time $elapsed)"
+    echo "🎯 Agents: $COMPLETED_AGENTS/$TOTAL_AGENTS complete"
+    echo "📊 Findings so far: $TOTAL_FINDINGS"
+    echo "⏳ ETA: $(format_time $eta)"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+}
+
+estimate_remaining_time() {
+    local completed=$1
+    local total=$2
+    local elapsed=$3
+    [ $completed -eq 0 ] && echo "900" && return  # 15 min default
+    local avg_per_agent=$((elapsed / completed))
+    local remaining=$((total - completed))
+    echo $((remaining * avg_per_agent))
+}
+
+format_time() {
+    local seconds=$1
+    printf "%02d:%02d" $((seconds/60)) $((seconds%60))
+}
+
+# Initialize v3.0 features
+echo "🚀 Initializing Claude-CodeSentinel v3.0 features..."
+
+# Initialize findings cache
+init_findings_cache() {
+    echo "[CACHE] Initializing findings cache..."
+    mkdir -p /tmp/codesentinel
+    echo '{"findings": [], "stats": {}}' > /tmp/codesentinel/cache.json
+}
+
+# Check for incremental mode
+check_incremental_mode() {
+    if [ -n "$(git status --porcelain)" ]; then
+        echo "[INCREMENTAL] Working directory changes detected"
+        export INCREMENTAL_MODE=true
+        export CHANGED_FILES=$(git diff --name-only HEAD)
+    elif [ -n "$PR_NUMBER" ]; then
+        echo "[INCREMENTAL] PR mode for #$PR_NUMBER"
+        export INCREMENTAL_MODE=true
+        export CHANGED_FILES=$(git diff --name-only main...HEAD)
+    else
+        echo "[FULL] Running complete analysis"
+        export INCREMENTAL_MODE=false
+    fi
+}
+
+# Initialize
+init_findings_cache
+check_incremental_mode
+```
 
 ### Phase 1: Discovery (3 min) - think
+
+```bash
+report_progress "Discovery" "Detecting languages and frameworks..."
+```
 
 Delegate to @orchestrator for discovery:
 ````

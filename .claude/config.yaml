@@ -138,13 +138,46 @@ reporting:
     - statistics
     - recommendations
 
-# Performance optimizations
+# Performance optimizations v3.0
 optimizations:
   pattern_caching: true
   incremental_analysis: true
   parallel_execution: true
   semantic_segmentation: true
   progressive_loading: true
+
+# v3.0 Parallel Execution Settings
+parallel_execution:
+  enabled: true
+  max_concurrent_agents: 3
+  tier_strategy: parallel_within_tier
+  timeout_per_agent: 300  # 5 minutes per agent
+  context_sharing: true
+  smart_chaining: true
+
+# v3.0 Incremental Analysis
+incremental:
+  auto_detect: true
+  pr_mode: true
+  commit_mode: true
+  working_dir_mode: true
+  cache_unchanged: true
+  baseline_comparison: true
+
+# v3.0 Context Management
+context_management:
+  max_tokens_per_agent: 500
+  compression_enabled: true
+  deduplication: true
+  shared_context_path: /tmp/codesentinel/context.json
+
+# v3.0 Findings Cache
+cache:
+  enabled: true
+  path: /tmp/codesentinel/cache.json
+  ttl: 3600
+  deduplication: true
+  auto_merge: true
 
 # Default thresholds
 thresholds:
