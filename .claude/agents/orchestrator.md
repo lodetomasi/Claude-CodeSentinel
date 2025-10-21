@@ -38,27 +38,24 @@ Decision tree for agent chaining:
 ## Mission
 Coordinate 9 specialized agents for comprehensive code review detecting 40+ issue types across 10 categories using intelligent agent chaining.
 
-## Target Configuration
+## Intelligent Target Detection
 
-The framework analyzes the target project directory, not the framework itself.
+The framework automatically detects the project root to analyze.
 
 ```bash
-# Load target configuration
-if [ -f ".claude/target.config" ]; then
-    source .claude/target.config
+# Auto-detect project root (inherited from full-review command)
+# TARGET_PATH is already set by the parent command
+echo "Using auto-detected project root: $TARGET_PATH"
+echo "Framework location: $FRAMEWORK_PATH"
+
+# Verify TARGET_PATH is set
+if [ -z "$TARGET_PATH" ]; then
+    echo "Error: TARGET_PATH not set. This should be called from full-review command."
+    exit 1
 fi
 
-# Set target path - priority order:
-# 1. Environment variable TARGET_PATH
-# 2. Config file TARGET_PATH
-# 3. Default to parent directory (../)
-export TARGET_PATH="${TARGET_PATH:-../}"
-
-# Resolve to absolute path
-export TARGET_PATH="$(cd "$(dirname "$TARGET_PATH")" && pwd)/$(basename "$TARGET_PATH")"
-
-echo "Target project path: $TARGET_PATH"
-echo "Framework path: $(pwd)"
+# Build exclusion patterns for framework directory
+EXCLUDE_PATTERN="--exclude-dir=$FRAMEWORK_DIRNAME --exclude-dir=.claude --exclude-dir=.git --exclude-dir=node_modules"
 ```
 
 ## Workflow Phases

@@ -8,27 +8,145 @@ model: claude-sonnet-4-5-20250929
 
 Execute comprehensive analysis with all 9 specialized agents across 10 categories.
 
-## Target Configuration Setup
+## Intelligent Project Root Auto-Detection
 
 ```bash
-# Load target configuration
-if [ -f ".claude/target.config" ]; then
-    source .claude/target.config
+# Function to find project root intelligently
+find_project_root() {
+    local current_dir="$(pwd)"
+    local checked_dirs=""
+
+    echo "🔍 Auto-detecting project root..."
+    echo ""
+
+    # Strategy 1: Look for .git directory (most reliable)
+    local dir="$current_dir"
+    while [ "$dir" != "/" ]; do
+        if [ -d "$dir/.git" ]; then
+            echo "  ✓ Found .git repository at: $dir"
+            echo "$dir"
+            return 0
+        fi
+        checked_dirs="$checked_dirs\n  - Checked: $dir"
+        dir="$(dirname "$dir")"
+    done
+
+    # Strategy 2: Look for project indicators in current or parent directory
+    for check_dir in "." ".." "../.." ; do
+        local abs_dir="$(cd "$check_dir" 2>/dev/null && pwd)"
+        [ -z "$abs_dir" ] && continue
+
+        # Check for various project root indicators
+        if [ -f "$abs_dir/package.json" ] || \
+           [ -f "$abs_dir/pom.xml" ] || \
+           [ -f "$abs_dir/build.gradle" ] || \
+           [ -f "$abs_dir/requirements.txt" ] || \
+           [ -f "$abs_dir/go.mod" ] || \
+           [ -f "$abs_dir/Cargo.toml" ] || \
+           [ -f "$abs_dir/composer.json" ] || \
+           [ -f "$abs_dir/Gemfile" ] || \
+           [ -f "$abs_dir/CLAUDE.md" ] || \
+           [ -f "$abs_dir/README.md" ]; then
+
+            # Found project indicator
+            local indicator=""
+            [ -f "$abs_dir/package.json" ] && indicator="package.json"
+            [ -f "$abs_dir/pom.xml" ] && indicator="pom.xml"
+            [ -f "$abs_dir/requirements.txt" ] && indicator="requirements.txt"
+            [ -f "$abs_dir/go.mod" ] && indicator="go.mod"
+            [ -f "$abs_dir/CLAUDE.md" ] && indicator="CLAUDE.md"
+
+            echo "  ✓ Found project indicator ($indicator) at: $abs_dir"
+            echo "$abs_dir"
+            return 0
+        fi
+    done
+
+    # Strategy 3: Check if we're in a subdirectory with framework indicators
+    local current_basename="$(basename "$current_dir")"
+    if [[ "$current_basename" == *"claude"* ]] || \
+       [[ "$current_basename" == *"sentinel"* ]] || \
+       [[ "$current_basename" == *"framework"* ]] || \
+       [[ "$current_basename" == *"CodeSentinel"* ]] || \
+       [[ "$current_dir" == *"/.claude"* ]]; then
+        # Check if we ARE the framework (has .claude/agents directory)
+        if [ -d "$current_dir/.claude/agents" ]; then
+            # We're the framework itself, check parent for a project
+            local parent_dir="$(dirname "$current_dir")"
+            if [ -d "$parent_dir/.git" ] || \
+               [ -f "$parent_dir/package.json" ] || \
+               [ -f "$parent_dir/pom.xml" ] || \
+               [ -f "$parent_dir/requirements.txt" ] || \
+               [ -f "$parent_dir/go.mod" ]; then
+                echo "  ✓ Framework detected, parent is a project: $parent_dir"
+                echo "$parent_dir"
+                return 0
+            else
+                # Parent is not a project, analyze framework itself
+                echo "  ✓ Framework standalone mode: $current_dir"
+                echo "$current_dir"
+                return 0
+            fi
+        fi
+    fi
+
+    # Default: use current directory
+    echo "  ⚠ No clear project root found, using current directory"
+    echo "$current_dir"
+    return 0
+}
+
+# Function to get framework directory name for exclusion
+get_framework_dirname() {
+    local current_dir="$(pwd)"
+    local basename="$(basename "$current_dir")"
+
+    # If we're in .claude directory, get parent name
+    if [[ "$current_dir" == *"/.claude"* ]]; then
+        local framework_dir="$(dirname "$(echo "$current_dir" | sed 's|/.claude.*|/.claude|')")"
+        basename="$(basename "$framework_dir")"
+    fi
+
+    echo "$basename"
+}
+
+# Auto-detect project root
+export TARGET_PATH="$(find_project_root)"
+export FRAMEWORK_PATH="$(pwd)"
+export FRAMEWORK_DIRNAME="$(get_framework_dirname)"
+
+# Build exclusion patterns
+EXCLUDE_PATTERNS="--exclude-dir=.git --exclude-dir=node_modules --exclude-dir=vendor --exclude-dir=dist --exclude-dir=build"
+
+# Add framework directory to exclusions if we're analyzing parent
+if [ "$TARGET_PATH" != "$FRAMEWORK_PATH" ]; then
+    EXCLUDE_PATTERNS="$EXCLUDE_PATTERNS --exclude-dir=$FRAMEWORK_DIRNAME --exclude-dir=.claude"
 fi
 
-# Set target path - priority order:
-# 1. Environment variable TARGET_PATH
-# 2. Config file TARGET_PATH
-# 3. Default to parent directory (../)
-export TARGET_PATH="${TARGET_PATH:-../}"
-
-# Resolve to absolute path
-export TARGET_PATH="$(cd "$(dirname "$TARGET_PATH")" && pwd)/$(basename "$TARGET_PATH")"
-
+echo ""
 echo "════════════════════════════════════════════════════════════"
-echo "🎯 TARGET PROJECT: $TARGET_PATH"
-echo "🔧 FRAMEWORK PATH: $(pwd)"
+echo "🎯 PROJECT ROOT: $TARGET_PATH"
+echo "🔧 FRAMEWORK: $FRAMEWORK_PATH"
+if [ "$TARGET_PATH" != "$FRAMEWORK_PATH" ]; then
+    echo "🚫 EXCLUDING: $FRAMEWORK_DIRNAME/ (framework directory)"
+fi
 echo "════════════════════════════════════════════════════════════"
+echo ""
+
+# Verify we can access the target
+if [ ! -d "$TARGET_PATH" ]; then
+    echo "❌ Error: Cannot access target directory: $TARGET_PATH"
+    exit 1
+fi
+
+# Show what we'll analyze
+echo "📊 Project Overview:"
+echo "  Total files: $(find "$TARGET_PATH" -type f -name "*.java" -o -name "*.py" -o -name "*.js" -o -name "*.go" 2>/dev/null | grep -v "/$FRAMEWORK_DIRNAME/" | wc -l)"
+echo "  Java: $(find "$TARGET_PATH" -name "*.java" 2>/dev/null | grep -v "/$FRAMEWORK_DIRNAME/" | wc -l) files"
+echo "  Python: $(find "$TARGET_PATH" -name "*.py" 2>/dev/null | grep -v "/$FRAMEWORK_DIRNAME/" | wc -l) files"
+echo "  JavaScript: $(find "$TARGET_PATH" -name "*.js" -o -name "*.jsx" 2>/dev/null | grep -v "/$FRAMEWORK_DIRNAME/" | wc -l) files"
+echo "  TypeScript: $(find "$TARGET_PATH" -name "*.ts" -o -name "*.tsx" 2>/dev/null | grep -v "/$FRAMEWORK_DIRNAME/" | wc -l) files"
+echo "  Go: $(find "$TARGET_PATH" -name "*.go" 2>/dev/null | grep -v "/$FRAMEWORK_DIRNAME/" | wc -l) files"
 echo ""
 ```
 

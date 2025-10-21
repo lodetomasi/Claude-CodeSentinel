@@ -2,9 +2,9 @@
 
 ## Come Integrare il Framework nel Tuo Progetto
 
-Questa guida spiega come integrare Claude-CodeSentinel come sottocartella nel tuo progetto per analizzare il codice dalla directory radice.
+Questa guida spiega come integrare Claude-CodeSentinel come sottocartella nel tuo progetto. Il framework rileva automaticamente la root del progetto senza bisogno di configurazione!
 
-## Setup Rapido (3 minuti)
+## Setup Rapido (2 minuti) 🚀
 
 ### 1. Aggiungi il Framework al Tuo Progetto
 
@@ -23,108 +23,65 @@ git submodule init
 git submodule update
 ```
 
-### 2. Configura il Target Path
+### 2. Esegui l'Analisi
 
-```bash
-# Entra nella directory del framework
+Da Claude Code, entra nella directory del framework:
+
+```
 cd .claude-sentinel
-
-# Configura per analizzare la directory padre (il tuo progetto)
-./setup-target.sh
-
-# Seleziona opzione 1 (Parent directory) quando richiesto
-```
-
-### 3. Verifica la Configurazione
-
-```bash
-# Test della configurazione
-./setup-target.sh -t
-
-# Dovresti vedere:
-# ✅ Target directory exists: /percorso/del/tuo/progetto
-# 📊 Project Statistics:
-#   Java files: XXX
-#   Python files: XXX
-#   ...
-```
-
-## Uso del Framework
-
-### Esegui Analisi Completa
-
-Da Claude Code, quando sei nella directory del framework:
-
-```
 /full-review
 ```
 
-Il framework analizzerà automaticamente il progetto padre, NON se stesso.
+**Fatto!** Il framework rileverà automaticamente il progetto padre e lo analizzerà.
+
+## Come Funziona l'Auto-Detection 🔍
+
+Il framework usa una logica intelligente per trovare la root del progetto:
+
+1. **Cerca .git**: Risale le directory fino a trovare un repository git
+2. **Indicatori di progetto**: Cerca file come `package.json`, `pom.xml`, `requirements.txt`, `go.mod`, `CLAUDE.md`
+3. **Detection del framework**: Se rileva di essere in una directory "claude-sentinel" o simile, usa automaticamente il padre
+4. **Esclusione automatica**: Esclude se stesso dall'analisi
 
 ## Struttura del Progetto
 
 ```
 tuo-progetto/
-├── src/                      # Il tuo codice (verrà analizzato)
-├── lib/                      # Le tue librerie (verranno analizzate)
-├── tests/                    # I tuoi test (verranno analizzati)
-├── CLAUDE.md                 # Le tue istruzioni specifiche (opzionale)
-├── .claude-sentinel/         # Framework (NON analizzato)
-│   ├── .claude/              # Configurazione framework
-│   │   ├── agents/           # 10 agenti specializzati
-│   │   ├── commands/         # Comandi disponibili
-│   │   ├── patterns/         # Pattern di rilevamento
-│   │   ├── skills/           # Capacità modulari
-│   │   └── target.config     # CONFIGURAZIONE TARGET ← Punta a ../
-│   ├── reports/              # Report generati
-│   └── setup-target.sh       # Script di configurazione
+├── src/                      # ✅ Verrà analizzato
+├── lib/                      # ✅ Verrà analizzato
+├── tests/                    # ✅ Verrà analizzato
+├── CLAUDE.md                 # ✅ Istruzioni specifiche (opzionale)
+├── .claude-sentinel/         # 🚫 NON analizzato (auto-escluso)
+│   ├── .claude/              # Logica del framework
+│   └── reports/              # Report generati qui
 └── ...
 ```
 
-## Configurazioni Avanzate
+## Output dell'Auto-Detection
 
-### Analizzare un Progetto Diverso
+Quando esegui `/full-review`, vedrai:
 
-```bash
-# Analizza un progetto fratello
-./setup-target.sh -p ../../altro-progetto
-
-# Analizza con path assoluto
-./setup-target.sh -a /path/to/any/project
 ```
+🔍 Auto-detecting project root...
 
-### Variabili d'Ambiente
+  ✓ Found .git repository at: /path/to/your/project
 
-```bash
-# Override temporaneo del target
-TARGET_PATH="/altro/progetto" /full-review
+════════════════════════════════════════════════════════════
+🎯 PROJECT ROOT: /path/to/your/project
+🔧 FRAMEWORK: /path/to/your/project/.claude-sentinel
+🚫 EXCLUDING: .claude-sentinel/ (framework directory)
+════════════════════════════════════════════════════════════
 
-# Export permanente per la sessione
-export TARGET_PATH="../mio-progetto"
-```
-
-### File di Configurazione
-
-Modifica `.claude/target.config`:
-
-```bash
-# Path del target (relativo al framework)
-TARGET_PATH="../"
-
-# Escludi directory specifiche
-EXCLUDE_DIRS="node_modules,vendor,.git,dist,build,target,.claude-sentinel"
-
-# Includi solo directory specifiche (lascia vuoto per tutte)
-INCLUDE_DIRS="src,lib,app"
+📊 Project Overview:
+  Total files: 245
+  Java: 120 files
+  Python: 80 files
+  JavaScript: 45 files
 ```
 
 ## Integrazione con CLAUDE.md del Progetto
 
 Il framework rispetta automaticamente il file `CLAUDE.md` nella radice del tuo progetto:
-
-1. **Il tuo progetto ha CLAUDE.md**: Il framework lo legge e applica le istruzioni
-2. **Il framework ha il suo CLAUDE.md**: Usato solo per la logica interna del framework
-3. **Entrambi presenti**: Priorità al CLAUDE.md del progetto target
 
 ### Esempio CLAUDE.md del Progetto
 
@@ -153,7 +110,6 @@ Il framework rispetta automaticamente il file `CLAUDE.md` nella radice del tuo p
 ```bash
 # .gitignore del progetto principale
 .claude-sentinel/reports/
-.claude-sentinel/.claude/target.config
 
 # Se usi submodule
 [submodule ".claude-sentinel"]
@@ -161,36 +117,17 @@ Il framework rispetta automaticamente il file `CLAUDE.md` nella radice del tuo p
     url = https://github.com/lodetomasi/Claude-CodeSentinel.git
 ```
 
-### 2. CI/CD Integration
-
-```yaml
-# GitHub Actions esempio
-- name: Setup CodeSentinel
-  run: |
-    cd .claude-sentinel
-    ./setup-target.sh -p ../
-
-- name: Run Security Analysis
-  run: |
-    cd .claude-sentinel
-    # Usa Claude Code API o CLI se disponibile
-```
-
-### 3. Team Workflow
+### 2. Team Workflow
 
 1. **Setup Iniziale** (una volta):
    ```bash
    git submodule add [url] .claude-sentinel
-   cd .claude-sentinel
-   ./setup-target.sh
    ```
 
 2. **Altri Developer**:
    ```bash
    git submodule init
    git submodule update
-   cd .claude-sentinel
-   ./setup-target.sh
    ```
 
 3. **Aggiornamenti Framework**:
@@ -199,52 +136,64 @@ Il framework rispetta automaticamente il file `CLAUDE.md` nella radice del tuo p
    git pull origin main
    ```
 
+## Scenari Supportati
+
+### Progetto con Git
+```
+my-project/
+├── .git/                    # ← Framework trova questo
+├── src/
+└── .claude-sentinel/        # ← Framework qui
+```
+
+### Progetto Node.js
+```
+my-app/
+├── package.json             # ← Framework trova questo
+├── src/
+└── .claude-sentinel/
+```
+
+### Progetto Java
+```
+my-service/
+├── pom.xml                  # ← Framework trova questo
+├── src/
+└── .claude-sentinel/
+```
+
+### Progetto Python
+```
+my-api/
+├── requirements.txt         # ← Framework trova questo
+├── app/
+└── .claude-sentinel/
+```
+
 ## Troubleshooting
 
-### Il framework analizza se stesso invece del progetto
+### Il framework non trova il progetto corretto
 
-**Soluzione**:
-```bash
-cd .claude-sentinel
-./setup-target.sh
-# Seleziona opzione 1 (Parent directory)
-```
+Il framework mostra sempre quale directory analizzerà. Se non è corretta:
 
-### "Target directory does not exist"
+1. **Verifica gli indicatori**: Assicurati che il progetto abbia almeno uno di: `.git`, `package.json`, `pom.xml`, `requirements.txt`, `go.mod`, `CLAUDE.md`, `README.md`
 
-**Verifica**:
-```bash
-# Controlla il path configurato
-cat .claude/target.config
-
-# Test configurazione
-./setup-target.sh -t
-```
+2. **Override manuale** (se necessario):
+   ```bash
+   export TARGET_PATH="/path/to/project"
+   /full-review
+   ```
 
 ### Report non trovati
 
-I report sono salvati in `.claude-sentinel/reports/`. Assicurati di cercarli lì:
+I report sono salvati in `.claude-sentinel/reports/`:
 ```bash
 ls -la .claude-sentinel/reports/
-```
-
-### Pattern non rileva i miei file
-
-Verifica le estensioni supportate:
-```bash
-# Il framework supporta: .java, .py, .js, .jsx, .ts, .tsx, .go
-find ../ -name "*.tua-estensione" | head -5
 ```
 
 ## Comandi Utili
 
 ```bash
-# Setup rapido per progetto padre
-./setup-target.sh -p ../
-
-# Verifica configurazione
-./setup-target.sh -t
-
 # Analisi completa (da Claude Code)
 /full-review
 
@@ -253,22 +202,30 @@ rm reports/*.md
 
 # Aggiorna framework
 git pull origin main
+
+# Verifica dove il framework analizzerà
+cd .claude-sentinel && pwd && cd .. && pwd
 ```
 
-## Supporto
+## Vantaggi dell'Auto-Detection
 
-- **Issues**: https://github.com/lodetomasi/Claude-CodeSentinel/issues
-- **Documentazione**: CLAUDE.md (istruzioni framework)
-- **Esempi**: reports/ (report di esempio)
+✅ **Zero configurazione**: Funziona subito senza setup
+
+✅ **Intelligente**: Rileva automaticamente la root del progetto
+
+✅ **Auto-esclusione**: Non analizza mai se stesso
+
+✅ **Multi-linguaggio**: Supporta Java, Python, JavaScript, Go
+
+✅ **Flessibile**: Si adatta a qualsiasi struttura di progetto
 
 ## Note Importanti
 
-1. **Il framework NON analizza se stesso** per default
+1. **Il framework NON analizza se stesso** automaticamente
 2. **I report contengono snippet di codice** - verifica prima di condividere
-3. **Configurazione locale** in `.claude/target.config` - non committare se contiene path sensibili
-4. **Performance**: 45-60 minuti per analisi completa di progetti grandi
-5. **Costo API**: $2-5 per review completa
+3. **Performance**: 45-60 minuti per analisi completa di progetti grandi
+4. **Costo API**: $2-5 per review completa
 
 ---
 
-*Claude-CodeSentinel v2.0 - AI-Powered Code Review Framework*
+*Claude-CodeSentinel v2.0 - AI-Powered Code Review Framework with Intelligent Auto-Detection*

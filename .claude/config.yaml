@@ -16,15 +16,6 @@ paths:
   skills: .claude/skills
   reports: reports
 
-# Target project configuration
-target:
-  # Default target is parent directory (assumes framework is subdirectory of project)
-  default_path: "../"
-  # Can be overridden by TARGET_PATH environment variable
-  use_env_override: true
-  # Configuration file for target settings
-  config_file: .claude/target.config
-
 # Agent configuration
 agents:
   orchestrator:
