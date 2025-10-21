@@ -1,8 +1,8 @@
-# Claude-CodeSentinel Configuration v2.0
-# Central configuration for the AI code review framework
+# Galadhrim Configuration v2.0
+# Central configuration for the AI code review framework - The Code Sentinels
 
 framework:
-  name: Claude-CodeSentinel
+  name: Galadhrim
   version: 2.0
   author: lodetomasi
   license: MIT

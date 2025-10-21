@@ -1,10 +1,12 @@
-# Claude-CodeSentinel v2.0 🛡️
+# 🧙 Galadhrim v2.0 - The Code Sentinels
 
-[![GitHub stars](https://img.shields.io/github/stars/lodetomasi/Claude-CodeSentinel?style=social)](https://github.com/lodetomasi/Claude-CodeSentinel)
+[![GitHub stars](https://img.shields.io/github/stars/lodetomasi/Galadhrim-CodeSentinel?style=social)](https://github.com/lodetomasi/Galadhrim-CodeSentinel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code Compatible](https://img.shields.io/badge/Claude%20Code-v2.0-blue)](https://claude.ai)
-[![Code Review](https://img.shields.io/badge/Code%20Review-AI%20Powered-green)](https://github.com/lodetomasi/Claude-CodeSentinel)
-[![Issues Detected](https://img.shields.io/badge/Issues%20Detected-65%2B-red)](https://github.com/lodetomasi/Claude-CodeSentinel)
+[![Code Review](https://img.shields.io/badge/Code%20Review-AI%20Powered-green)](https://github.com/lodetomasi/Galadhrim-CodeSentinel)
+[![Issues Detected](https://img.shields.io/badge/Issues%20Detected-65%2B-red)](https://github.com/lodetomasi/Galadhrim-CodeSentinel)
+
+> *"Like the vigilant sentinels of Lothlórien, Galadhrim watches over your code with elven precision and wisdom."*
 
 **Next-gen AI code review framework** with **Chain-of-Thought reasoning** and **intelligent agent coordination**. Detects **65+ issue types** using **10 specialized agents** with advanced tools and skills.
 
@@ -17,7 +19,7 @@
 - 💡 **Smart Token Management** - Optimized thinking levels (think → ultrathink)
 - 🚀 **Parallel Execution** - Agents run concurrently for faster analysis
 
-## ⭐ Why Claude-CodeSentinel?
+## ⭐ Why Galadhrim?
 
 - 🚀 **10x Faster Code Reviews** - Automated detection in minutes, not hours
 - 🎯 **95% Accuracy** on critical security vulnerabilities
@@ -30,15 +32,14 @@
 ## 🚀 Quick Start
 
 ```bash
-# 1. Clone the framework
-git clone https://github.com/lodetomasi/Claude-CodeSentinel.git
+# 1. Clone the framework as a subdirectory in your project
+git clone https://github.com/lodetomasi/Galadhrim-CodeSentinel.git .galadhrim
 
-# 2. Copy to your project
-cp -r Claude-CodeSentinel/.claude your-project/
-cp Claude-CodeSentinel/CLAUDE.md your-project/
+# 2. Open Claude Code and navigate to the framework
+cd .galadhrim
 
-# 3. Open your project in Claude Code and run
-/project:full-review    # Complete 45-60 min analysis with all agents
+# 3. Run the analysis - Galadhrim will auto-detect and analyze your project
+/full-review    # Complete 45-60 min analysis with all agents
 ```
 
 ## 🎯 What It Detects

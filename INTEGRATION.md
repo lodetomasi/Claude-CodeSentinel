@@ -1,8 +1,8 @@
-# Claude-CodeSentinel Integration Guide
+# 🧙 Galadhrim Integration Guide
 
 ## Come Integrare il Framework nel Tuo Progetto
 
-Questa guida spiega come integrare Claude-CodeSentinel come sottocartella nel tuo progetto. Il framework rileva automaticamente la root del progetto senza bisogno di configurazione!
+Questa guida spiega come integrare Galadhrim come sottocartella nel tuo progetto. Il framework rileva automaticamente la root del progetto senza bisogno di configurazione!
 
 ## Setup Rapido (2 minuti) 🚀
 
@@ -11,14 +11,14 @@ Questa guida spiega come integrare Claude-CodeSentinel come sottocartella nel tu
 #### Opzione A: Clone Diretto
 ```bash
 # Dalla radice del tuo progetto
-git clone https://github.com/lodetomasi/Claude-CodeSentinel.git .claude-sentinel
-cd .claude-sentinel
+git clone https://github.com/lodetomasi/Galadhrim-CodeSentinel.git .galadhrim
+cd .galadhrim
 ```
 
 #### Opzione B: Git Submodule (Raccomandato)
 ```bash
 # Dalla radice del tuo progetto
-git submodule add https://github.com/lodetomasi/Claude-CodeSentinel.git .claude-sentinel
+git submodule add https://github.com/lodetomasi/Galadhrim-CodeSentinel.git .galadhrim
 git submodule init
 git submodule update
 ```
@@ -28,7 +28,7 @@ git submodule update
 Da Claude Code, entra nella directory del framework:
 
 ```
-cd .claude-sentinel
+cd .galadhrim
 /full-review
 ```
 
@@ -40,7 +40,7 @@ Il framework usa una logica intelligente per trovare la root del progetto:
 
 1. **Cerca .git**: Risale le directory fino a trovare un repository git
 2. **Indicatori di progetto**: Cerca file come `package.json`, `pom.xml`, `requirements.txt`, `go.mod`, `CLAUDE.md`
-3. **Detection del framework**: Se rileva di essere in una directory "claude-sentinel" o simile, usa automaticamente il padre
+3. **Detection del framework**: Se rileva di essere in una directory "galadhrim" o simile, usa automaticamente il padre
 4. **Esclusione automatica**: Esclude se stesso dall'analisi
 
 ## Struttura del Progetto
@@ -51,7 +51,7 @@ tuo-progetto/
 ├── lib/                      # ✅ Verrà analizzato
 ├── tests/                    # ✅ Verrà analizzato
 ├── CLAUDE.md                 # ✅ Istruzioni specifiche (opzionale)
-├── .claude-sentinel/         # 🚫 NON analizzato (auto-escluso)
+├── .galadhrim/               # 🚫 NON analizzato (auto-escluso)
 │   ├── .claude/              # Logica del framework
 │   └── reports/              # Report generati qui
 └── ...
@@ -68,8 +68,8 @@ Quando esegui `/full-review`, vedrai:
 
 ════════════════════════════════════════════════════════════
 🎯 PROJECT ROOT: /path/to/your/project
-🔧 FRAMEWORK: /path/to/your/project/.claude-sentinel
-🚫 EXCLUDING: .claude-sentinel/ (framework directory)
+🔧 FRAMEWORK: /path/to/your/project/.galadhrim
+🚫 EXCLUDING: .galadhrim/ (framework directory)
 ════════════════════════════════════════════════════════════
 
 📊 Project Overview:
@@ -109,19 +109,19 @@ Il framework rispetta automaticamente il file `CLAUDE.md` nella radice del tuo p
 
 ```bash
 # .gitignore del progetto principale
-.claude-sentinel/reports/
+.galadhrim/reports/
 
 # Se usi submodule
-[submodule ".claude-sentinel"]
-    path = .claude-sentinel
-    url = https://github.com/lodetomasi/Claude-CodeSentinel.git
+[submodule ".galadhrim"]
+    path = .galadhrim
+    url = https://github.com/lodetomasi/Galadhrim-CodeSentinel.git
 ```
 
 ### 2. Team Workflow
 
 1. **Setup Iniziale** (una volta):
    ```bash
-   git submodule add [url] .claude-sentinel
+   git submodule add [url] .galadhrim
    ```
 
 2. **Altri Developer**:
@@ -132,7 +132,7 @@ Il framework rispetta automaticamente il file `CLAUDE.md` nella radice del tuo p
 
 3. **Aggiornamenti Framework**:
    ```bash
-   cd .claude-sentinel
+   cd .galadhrim
    git pull origin main
    ```
 
@@ -143,7 +143,7 @@ Il framework rispetta automaticamente il file `CLAUDE.md` nella radice del tuo p
 my-project/
 ├── .git/                    # ← Framework trova questo
 ├── src/
-└── .claude-sentinel/        # ← Framework qui
+└── .galadhrim/              # ← Framework qui
 ```
 
 ### Progetto Node.js
@@ -151,7 +151,7 @@ my-project/
 my-app/
 ├── package.json             # ← Framework trova questo
 ├── src/
-└── .claude-sentinel/
+└── .galadhrim/
 ```
 
 ### Progetto Java
@@ -159,7 +159,7 @@ my-app/
 my-service/
 ├── pom.xml                  # ← Framework trova questo
 ├── src/
-└── .claude-sentinel/
+└── .galadhrim/
 ```
 
 ### Progetto Python
@@ -167,7 +167,7 @@ my-service/
 my-api/
 ├── requirements.txt         # ← Framework trova questo
 ├── app/
-└── .claude-sentinel/
+└── .galadhrim/
 ```
 
 ## Troubleshooting
@@ -186,9 +186,9 @@ Il framework mostra sempre quale directory analizzerà. Se non è corretta:
 
 ### Report non trovati
 
-I report sono salvati in `.claude-sentinel/reports/`:
+I report sono salvati in `.galadhrim/reports/`:
 ```bash
-ls -la .claude-sentinel/reports/
+ls -la .galadhrim/reports/
 ```
 
 ## Comandi Utili
@@ -204,7 +204,7 @@ rm reports/*.md
 git pull origin main
 
 # Verifica dove il framework analizzerà
-cd .claude-sentinel && pwd && cd .. && pwd
+cd .galadhrim && pwd && cd .. && pwd
 ```
 
 ## Vantaggi dell'Auto-Detection
@@ -228,4 +228,4 @@ cd .claude-sentinel && pwd && cd .. && pwd
 
 ---
 
-*Claude-CodeSentinel v2.0 - AI-Powered Code Review Framework with Intelligent Auto-Detection*
+*🧙 Galadhrim v2.0 - The Code Sentinels - AI-Powered Code Review Framework with Intelligent Auto-Detection*

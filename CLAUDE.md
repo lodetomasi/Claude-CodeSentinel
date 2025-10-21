@@ -1,7 +1,9 @@
-# Claude-CodeSentinel v2.0 - AI Code Review Framework
+# 🧙 Galadhrim - The Code Sentinels
+## *AI-Powered Code Review Framework for Claude Code*
 
 ## Repository Purpose
 Next-generation AI-powered code review framework with Chain-of-Thought reasoning detecting 65+ issue types across 10 categories.
+Like the vigilant sentinels of Lothlórien, Galadhrim watches over your code with elven precision and wisdom.
 Features: intelligent agent coordination, modular skills, advanced tools, and optimized token management.
 
 ## Project Structure
