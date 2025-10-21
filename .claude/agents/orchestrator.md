@@ -10,9 +10,11 @@ tools:
   - task
 thinking: ultrathink
 skills:
-  - agent-delegation
-  - workflow-coordination
-  - pattern-analysis
+  - pattern-matcher
+  - context-manager
+  - context-sharing
+  - findings-cache
+  - incremental-analyzer
 ---
 
 # Orchestrator Agent v2.0 - Enhanced with Agent Chaining
@@ -105,25 +107,100 @@ Prioritize files with:
 - CRITICAL patterns (SQL injection, secrets)
 - High LOC (>500 lines = potential god class)
 
-### Phase 3: Agent Delegation with Chaining (40 minutes) - ultrathink
+### Phase 3: Parallel Agent Delegation with Smart Chaining (15-20 minutes) - ultrathink
 
-#### Agent Chaining Strategy
+#### Enhanced Parallel Execution Strategy
 
 ```python
-# Intelligent agent chaining based on dependencies and information flow
+# Parallel execution within tiers for 3x speedup
 agent_chain = {
-    "tier_1": ["security-agent", "performance-agent"],  # Critical, run first
-    "tier_2": ["concurrency-agent", "data-integrity-agent"],  # Depend on tier 1
-    "tier_3": ["architecture-agent", "resilience-agent"],  # Need tier 1+2 context
-    "tier_4": ["observability-agent", "api-design-agent", "code-quality-agent"]  # Final analysis
+    "tier_1": {
+        "agents": ["security-agent", "performance-agent"],
+        "parallel": True,
+        "max_concurrent": 2,
+        "timeout": "5min"
+    },
+    "tier_2": {
+        "agents": ["concurrency-agent", "data-integrity-agent"],
+        "parallel": True,
+        "max_concurrent": 2,
+        "timeout": "5min"
+    },
+    "tier_3": {
+        "agents": ["architecture-agent", "resilience-agent"],
+        "parallel": True,
+        "max_concurrent": 2,
+        "timeout": "5min"
+    },
+    "tier_4": {
+        "agents": ["observability-agent", "api-design-agent", "code-quality-agent"],
+        "parallel": True,
+        "max_concurrent": 3,
+        "timeout": "5min"
+    }
 }
 ```
 
-**Information Flow:**
-1. Security findings → inform concurrency analysis (auth state issues)
-2. Performance findings → inform architecture analysis (bottlenecks)
-3. Concurrency findings → inform data integrity analysis (race conditions)
-4. All findings → inform code quality assessment
+#### Parallel Execution Implementation
+
+```bash
+# Function to run agents in parallel
+run_tier_parallel() {
+    local tier=$1
+    local agents=$2
+    local start_time=$(date +%s)
+
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "⚡ Starting Tier $tier (Parallel Mode)"
+    echo "🚀 Agents: $agents"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    # Run agents in parallel using background tasks
+    for agent in $agents; do
+        echo "[$(date +%H:%M:%S)] 🔄 Launching $agent..."
+        # Agent runs in background with context
+        run_agent_with_context "$agent" &
+    done
+
+    # Wait for all agents to complete
+    wait
+
+    local end_time=$(date +%s)
+    local duration=$((end_time - start_time))
+    echo "[$(date +%H:%M:%S)] ✅ Tier $tier complete in ${duration}s"
+}
+```
+
+#### Smart Context Passing (Max 500 tokens per agent)
+
+```python
+# Context sharing protocol for reduced token usage
+shared_context = {
+    "critical_findings": [],     # Only CRITICAL issues
+    "hotspot_files": [],         # Top 10 problematic files
+    "patterns_found": {},        # Pattern count by category
+    "tier_summaries": {},        # 100-token summary per tier
+    "recommendations": []        # Cross-cutting recommendations
+}
+
+def create_agent_context(agent_name, shared_context, tier):
+    """Create optimized context for each agent (max 500 tokens)"""
+    context = {
+        "agent": agent_name,
+        "tier": tier,
+        "critical_findings": shared_context["critical_findings"][-5:],  # Last 5 critical
+        "relevant_patterns": filter_relevant_patterns(agent_name, shared_context),
+        "previous_tier_summary": shared_context["tier_summaries"].get(tier-1, ""),
+        "hotspots": shared_context["hotspot_files"][:5]  # Top 5 files
+    }
+    return compress_context(context, max_tokens=500)
+```
+
+**Information Flow (Optimized):**
+1. Tier 1 (Parallel): Security + Performance → Share critical findings only
+2. Tier 2 (Parallel): Concurrency + Data Integrity → Use tier 1 context
+3. Tier 3 (Parallel): Architecture + Resilience → Use aggregated context
+4. Tier 4 (Parallel): Observability + API + Quality → Final analysis with all context
 
 Based on hotspot map, delegate to specialized agents with context passing:
 
