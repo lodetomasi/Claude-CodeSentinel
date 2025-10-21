@@ -8,6 +8,30 @@ model: claude-sonnet-4-5-20250929
 
 Execute comprehensive analysis with all 9 specialized agents across 10 categories.
 
+## Target Configuration Setup
+
+```bash
+# Load target configuration
+if [ -f ".claude/target.config" ]; then
+    source .claude/target.config
+fi
+
+# Set target path - priority order:
+# 1. Environment variable TARGET_PATH
+# 2. Config file TARGET_PATH
+# 3. Default to parent directory (../)
+export TARGET_PATH="${TARGET_PATH:-../}"
+
+# Resolve to absolute path
+export TARGET_PATH="$(cd "$(dirname "$TARGET_PATH")" && pwd)/$(basename "$TARGET_PATH")"
+
+echo "════════════════════════════════════════════════════════════"
+echo "🎯 TARGET PROJECT: $TARGET_PATH"
+echo "🔧 FRAMEWORK PATH: $(pwd)"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+```
+
 ## Enhanced Workflow with Progress Tracking
 
 ```bash

@@ -38,6 +38,29 @@ Decision tree for agent chaining:
 ## Mission
 Coordinate 9 specialized agents for comprehensive code review detecting 40+ issue types across 10 categories using intelligent agent chaining.
 
+## Target Configuration
+
+The framework analyzes the target project directory, not the framework itself.
+
+```bash
+# Load target configuration
+if [ -f ".claude/target.config" ]; then
+    source .claude/target.config
+fi
+
+# Set target path - priority order:
+# 1. Environment variable TARGET_PATH
+# 2. Config file TARGET_PATH
+# 3. Default to parent directory (../)
+export TARGET_PATH="${TARGET_PATH:-../}"
+
+# Resolve to absolute path
+export TARGET_PATH="$(cd "$(dirname "$TARGET_PATH")" && pwd)/$(basename "$TARGET_PATH")"
+
+echo "Target project path: $TARGET_PATH"
+echo "Framework path: $(pwd)"
+```
+
 ## Workflow Phases
 
 ### Phase 1: Discovery (3 minutes) - think
@@ -46,25 +69,27 @@ Execute language and framework detection:
 ```bash
 echo "=== DISCOVERY PHASE ==="
 echo ""
+echo "Analyzing target: $TARGET_PATH"
+echo ""
 
 echo "Language Detection:"
-echo "  Java files: $(find . -type f -name "*.java" 2>/dev/null | wc -l)"
-echo "  Python files: $(find . -type f -name "*.py" 2>/dev/null | wc -l)"
-echo "  JavaScript files: $(find . -type f -name "*.js" 2>/dev/null | wc -l)"
-echo "  Go files: $(find . -type f -name "*.go" 2>/dev/null | wc -l)"
+echo "  Java files: $(find "$TARGET_PATH" -type f -name "*.java" 2>/dev/null | grep -v "/.claude/" | wc -l)"
+echo "  Python files: $(find "$TARGET_PATH" -type f -name "*.py" 2>/dev/null | grep -v "/.claude/" | wc -l)"
+echo "  JavaScript files: $(find "$TARGET_PATH" -type f -name "*.js" 2>/dev/null | grep -v "/.claude/" | wc -l)"
+echo "  Go files: $(find "$TARGET_PATH" -type f -name "*.go" 2>/dev/null | grep -v "/.claude/" | wc -l)"
 echo ""
 
 echo "Lines of Code:"
-find . -name "*.java" -o -name "*.py" -o -name "*.js" -o -name "*.go" 2>/dev/null |
-  xargs wc -l 2>/dev/null | tail -1
+find "$TARGET_PATH" -name "*.java" -o -name "*.py" -o -name "*.js" -o -name "*.go" 2>/dev/null |
+  grep -v "/.claude/" | xargs wc -l 2>/dev/null | tail -1
 echo ""
 
 echo "Framework Detection:"
-grep -r "import.*springframework" --include="*.java" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Spring Boot detected"
-grep -r "from django" --include="*.py" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Django detected"
-grep -r "from flask" --include="*.py" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Flask detected"
-grep -r "require.*express\|import.*express" --include="*.js" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Express detected"
-grep -r "github.com/gin-gonic/gin" --include="*.go" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Gin detected"
+grep -r "import.*springframework" "$TARGET_PATH" --include="*.java" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Spring Boot detected"
+grep -r "from django" "$TARGET_PATH" --include="*.py" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Django detected"
+grep -r "from flask" "$TARGET_PATH" --include="*.py" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Flask detected"
+grep -r "require.*express\|import.*express" "$TARGET_PATH" --include="*.js" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Express detected"
+grep -r "github.com/gin-gonic/gin" "$TARGET_PATH" --include="*.go" -l 2>/dev/null | head -1 | grep -q . && echo "  ✓ Gin detected"
 echo ""
 ```
 
