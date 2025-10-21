@@ -67,7 +67,8 @@ find_project_root() {
     if [[ "$current_basename" == *"claude"* ]] || \
        [[ "$current_basename" == *"sentinel"* ]] || \
        [[ "$current_basename" == *"framework"* ]] || \
-       [[ "$current_basename" == *"CodeSentinel"* ]] || \
+       [[ "$current_basename" == *"galadhrim"* ]] || \
+       [[ "$current_basename" == *"Galadhrim"* ]] || \
        [[ "$current_dir" == *"/.claude"* ]]; then
         # Check if we ARE the framework (has .claude/agents directory)
         if [ -d "$current_dir/.claude/agents" ]; then
@@ -225,7 +226,7 @@ format_time() {
 }
 
 # Initialize v3.0 features
-echo -e "\033[1;96m🚀 Initializing Claude-CodeSentinel v3.0 features...\033[0m"
+echo -e "\033[1;96m🚀 Initializing Galadhrim v3.0 features...\033[0m"
 
 # Function to launch agent with color
 launch_agent() {
@@ -259,8 +260,8 @@ complete_agent() {
 # Initialize findings cache
 init_findings_cache() {
     echo -e "\033[1;92m[CACHE] Initializing findings cache...\033[0m"
-    mkdir -p /tmp/codesentinel
-    echo '{"findings": [], "stats": {}}' > /tmp/codesentinel/cache.json
+    mkdir -p /tmp/galadhrim
+    echo '{"findings": [], "stats": {}}' > /tmp/galadhrim/cache.json
 }
 
 # Check for incremental mode

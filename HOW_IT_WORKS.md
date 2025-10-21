@@ -1,4 +1,4 @@
-# 🎯 Come Funziona REALMENTE Claude-CodeSentinel
+# 🎯 Come Funziona REALMENTE Galadhrim
 
 ## La Verità sui Custom Slash Commands in Claude Code
 
@@ -34,9 +34,9 @@
 cd /path/to/your/project
 
 # 2. Copia solo le cartelle necessarie
-cp -r /path/to/Claude-CodeSentinel/.claude .
-cp -r /path/to/Claude-CodeSentinel/patterns .
-cp /path/to/Claude-CodeSentinel/CLAUDE.md .
+cp -r /path/to/Galadhrim-CodeSentinel/.claude .
+cp -r /path/to/Galadhrim-CodeSentinel/patterns .
+cp /path/to/Galadhrim-CodeSentinel/CLAUDE.md .
 
 # 3. Crea la cartella reports
 mkdir -p reports
@@ -48,12 +48,12 @@ mkdir -p reports
 cd /path/to/your/project
 
 # Aggiungi come submodule
-git submodule add https://github.com/lodetomasi/Claude-CodeSentinel.git .code-sentinel
+git submodule add https://github.com/lodetomasi/Galadhrim-CodeSentinel.git .galadhrim
 
 # Link simbolici alle cartelle necessarie
-ln -s .code-sentinel/.claude .claude
-ln -s .code-sentinel/patterns patterns
-ln -s .code-sentinel/CLAUDE.md CLAUDE.md
+ln -s .galadhrim/.claude .claude
+ln -s .galadhrim/patterns patterns
+ln -s .galadhrim/CLAUDE.md CLAUDE.md
 ```
 
 ## 🔧 Verifica Setup
@@ -97,7 +97,7 @@ Una volta configurato, in Claude Code puoi usare:
 cd ~/projects/my-spring-app
 
 # Setup del framework
-git clone https://github.com/lodetomasi/Claude-CodeSentinel.git temp
+git clone https://github.com/lodetomasi/Galadhrim-CodeSentinel.git temp
 mv temp/.claude .
 mv temp/patterns .
 mv temp/CLAUDE.md .

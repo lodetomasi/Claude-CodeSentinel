@@ -77,8 +77,11 @@ Provides a centralized cache for all findings during analysis, enabling real-tim
 
 ```bash
 init_findings_cache() {
-    local cache_file="/tmp/findings_cache.json"
+    local cache_file="/tmp/galadhrim/cache.json"
     local session_id="analysis-$(date +%Y%m%d-%H%M%S)"
+
+    # Create cache directory if it doesn't exist
+    mkdir -p /tmp/galadhrim
 
     cat > "$cache_file" << EOF
 {
@@ -110,7 +113,7 @@ EOF
 add_finding_to_cache() {
     local finding=$1
     local agent=$2
-    local cache_file="/tmp/findings_cache.json"
+    local cache_file="/tmp/galadhrim/cache.json"
 
     # Generate hash for deduplication
     local hash=$(echo "$finding" | jq -r '.file + ":" + (.line | tostring) + ":" + .category' | sha256sum | cut -d' ' -f1)
@@ -159,7 +162,7 @@ add_finding_to_cache() {
 # Get all findings by severity
 get_findings_by_severity() {
     local severity=$1
-    local cache_file="/tmp/findings_cache.json"
+    local cache_file="/tmp/galadhrim/cache.json"
 
     jq --arg sev "$severity" '.findings | to_entries | map(select(.value.severity == $sev)) | map(.value)' "$cache_file"
 }
@@ -167,7 +170,7 @@ get_findings_by_severity() {
 # Get findings by file
 get_findings_by_file() {
     local file=$1
-    local cache_file="/tmp/findings_cache.json"
+    local cache_file="/tmp/galadhrim/cache.json"
 
     jq --arg file "$file" '.findings | to_entries | map(select(.value.file == $file)) | map(.value)' "$cache_file"
 }
@@ -175,7 +178,7 @@ get_findings_by_file() {
 # Get top problematic files
 get_top_files() {
     local limit=${1:-10}
-    local cache_file="/tmp/findings_cache.json"
+    local cache_file="/tmp/galadhrim/cache.json"
 
     jq --argjson limit "$limit" '.statistics.by_file | to_entries | sort_by(.value) | reverse | .[:$limit]' "$cache_file"
 }
@@ -185,7 +188,7 @@ get_top_files() {
 
 ```bash
 print_cache_statistics() {
-    local cache_file="/tmp/findings_cache.json"
+    local cache_file="/tmp/galadhrim/cache.json"
 
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "📊 FINDINGS CACHE STATISTICS"
@@ -300,7 +303,7 @@ print_cache_statistics
 
 ```bash
 finalize_cache() {
-    local cache_file="/tmp/findings_cache.json"
+    local cache_file="/tmp/galadhrim/cache.json"
 
     # Mark as complete
     jq '.session.status = "complete" | .session.end_time = (now | todate)' "$cache_file" > "${cache_file}.tmp" && \
@@ -317,7 +320,7 @@ finalize_cache() {
 
 ```bash
 cleanup_cache() {
-    local cache_file="/tmp/findings_cache.json"
+    local cache_file="/tmp/galadhrim/cache.json"
 
     # Archive if needed
     if [ -f "$cache_file" ]; then

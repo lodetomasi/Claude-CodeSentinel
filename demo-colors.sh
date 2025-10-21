@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Claude-CodeSentinel v3.0 - Color Demo Script
+# Galadhrim v3.0 - Color Demo Script
 # Run this in your terminal to see the colorful output!
 
 # Define colors
@@ -21,7 +21,7 @@ clear
 # Header
 echo -e "${BRIGHT_CYAN}"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "     🚀 Claude-CodeSentinel v3.0 - Agent Color Demo 🚀      "
+echo "     🚀 Galadhrim v3.0 - Agent Color Demo 🚀      "
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo -e "${RESET}\n"
 
